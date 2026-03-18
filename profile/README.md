@@ -26,4 +26,5 @@
 | Duhan Cigel         | duhanc  | **TBD** |
 | Pontus Forsman      | ponfor  | **TBD** |
 | Elliot Steffensen   | ellste  | **TBD** |
+| Jacob Wilhelmsson   | jacwil  | **TBD** |
 | Roble Yusuf Mohamud | robleym | **TBD** |
