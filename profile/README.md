@@ -10,7 +10,7 @@
 
 ## Quick Links
 
-- [Kanban Board](link) — GitHub Projects board
+- [Kanban Board](https://gits-15.sys.kth.se/orgs/8-mile/projects/1) — GitHub Projects board
 - [Overleaf](link) — Reports and submissions
 - [Workflow Guide](../docs/WORKFLOW.md) — Branching, commits, code style, and review process
 
@@ -22,7 +22,7 @@
 
 | Name                | GitHub  | Role(s) |
 | ------------------- | ------- | ------- |
-| Karl Andersson?     | ?       | **TBD** |
+| Karl Andersson?     | karla6  | **TBD** |
 | Duhan Cigel         | duhanc  | **TBD** |
 | Pontus Forsman      | ponfor  | **TBD** |
 | Elliot Steffensen   | ellste  | **TBD** |
