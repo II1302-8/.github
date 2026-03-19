@@ -3,9 +3,10 @@
 ## Version Control
 
 - **Branching model**: Branch-based development off `main`.
-- **Branch naming**: `feature/<issue-number>-short-description` or `fix/<issue-number>-short-description`.
-- **Merge strategy**: Rebase merges only.
-- **Pull requests**: Every PR requires **at least one approval** before merging to `main`. No direct pushes to `main`.
+- **Branch naming**: `<type>/<issue-number>-short-description`, where type matches the following commit types (`feature/`, `fix/`, `docs/`, `chore/`, `refactor/`).
+- **Merge strategy**: Squash merges only. The PR title becomes the squash commit message on `main`, so it **must** follow the Conventional Commits format. Individual commits on the branch don't need to.
+- **Pull requests**: Every PR requires **at least one approval** before merging to `main`. No direct pushes to `main`. The PR author is responsible for merging after approval.
+- **PR scope**: Keep PRs small and focused on a single concern.
 
 ## Commit Messages
 
@@ -56,7 +57,7 @@ Examples:
 ### General
 
 - Run the formatter before committing. Ideally set up a pre-commit hook or editor integration so it happens automatically.
-- Don't mix style changes with functional changes in the same commit.
+- Don't mix style changes with functional changes in the same PR.
 
 ## Code Review
 
