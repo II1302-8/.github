@@ -10,7 +10,7 @@
 
 ## Quick Links
 
-- [Kanban Board](https://gits-15.sys.kth.se/orgs/8-mile/projects/1) — GitHub Projects board
+- [Project Board](https://gits-15.sys.kth.se/orgs/8-mile/projects/1) — GitHub Projects board
 - [Overleaf](link) — Reports and submissions
 - [Workflow Guide](../docs/WORKFLOW.md) — Branching, commits, code style, and review process
 
