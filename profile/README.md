@@ -22,9 +22,9 @@
 
 | Name                | KTH     | GitHub        | Role(s)                |
 | ------------------- | ------- | ------------- | ---------------------- |
-| Karl Andersson?     | karla6  |               | Backend dev            |
+| Karl Andersson      | karla6  |               | Backend dev            |
 | Duhan Cigel         | duhanc  | Doodlejnoodle | IoT lead               |
-| Pontus Forsman      | ponfor  |               | Backend dev            |
+| Pontus Forsman      | ponfor  | pntzf         | Backend dev            |
 | Elliot Steffensen   | ellste  | xishell       | Product owner, IoT dev |
-| Jacob Wilhelmsson   | jacwil  |               | Frontend dev           |
-| Roble Yusuf Mohamud | robleym |               | Frontend dev           |
+| Jacob Wilhelmsson   | jacwil  | LellesBodega  | Frontend dev           |
+| Roble Yusuf Mohamud | robleym | Roblethe1     | Frontend dev           |
