@@ -10,21 +10,21 @@
 
 ## Quick Links
 
-- [Project Board](https://gits-15.sys.kth.se/orgs/8-mile/projects/1) — GitHub Projects board
+- [Project Board](https://github.com/orgs/II1302-8/projects/1) — GitHub Projects board
 - [Overleaf](link) — Reports and submissions
 - [Workflow Guide](../docs/WORKFLOW.md) — Branching, commits, code style, and review process
 
 ## Project Structure
 
-> **TBD** — Depends on the chosen project. Likely a monorepo with separate directories per component.
+> **TBD** — Depends on the chosen project.
 
 ## Team
 
-| Name                | GitHub  | Role(s) |
-| ------------------- | ------- | ------- |
-| Karl Andersson?     | karla6  | **TBD** |
-| Duhan Cigel         | duhanc  | **TBD** |
-| Pontus Forsman      | ponfor  | **TBD** |
-| Elliot Steffensen   | ellste  | **TBD** |
-| Jacob Wilhelmsson   | jacwil  | **TBD** |
-| Roble Yusuf Mohamud | robleym | **TBD** |
+| Name                | KTH     | GitHub        | Role(s)                |
+| ------------------- | ------- | ------------- | ---------------------- |
+| Karl Andersson?     | karla6  |               | Backend dev            |
+| Duhan Cigel         | duhanc  | Doodlejnoodle | IoT lead               |
+| Pontus Forsman      | ponfor  |               | Backend dev            |
+| Elliot Steffensen   | ellste  | xishell       | Product owner, IoT dev |
+| Jacob Wilhelmsson   | jacwil  |               | Frontend dev           |
+| Roble Yusuf Mohamud | robleym |               | Frontend dev           |
