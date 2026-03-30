@@ -145,12 +145,20 @@ jobs:
             const dockpulseCount = sprintItems.filter(i => i.repository?.name === 'dockpulse').length;
             const iotCount = sprintItems.filter(i => i.repository?.name === 'dockpulse-iot').length;
 
+            // Format date for title
+            const dateStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+            // Timestamp for footer
+            const now = new Date();
+            const timestamp = now.toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm', hour: '2-digit', minute: '2-digit' });
+            const dateStamp = now.toLocaleDateString('en-US', { timeZone: 'Europe/Stockholm', month: 'short', day: 'numeric', year: 'numeric' });
+
             // Write data for subsequent steps
             const fs = require('fs');
             const data = {
               currentSprint, percent, doneCount, total, daysLeft,
               counts, blocked: blocked.length, prText, blockedText,
-              dockpulseCount, iotCount
+              dockpulseCount, iotCount, dateStr, timestamp, dateStamp
             };
             fs.writeFileSync('/tmp/summary.json', JSON.stringify(data));
 
@@ -179,9 +187,12 @@ jobs:
           BLOCKED_TEXT=$(echo "$DATA" | jq -r '.blockedText')
           DOCKPULSE=$(echo "$DATA" | jq -r '.dockpulseCount')
           IOT=$(echo "$DATA" | jq -r '.iotCount')
+          DATE_STR=$(echo "$DATA" | jq -r '.dateStr')
+          TIMESTAMP=$(echo "$DATA" | jq -r '.timestamp')
+          DATE_STAMP=$(echo "$DATA" | jq -r '.dateStamp')
 
-          PAYLOAD=$(jq -n \
-            --arg sprint "$SPRINT" \
+          # Build fields array conditionally
+          FIELDS=$(jq -n \
             --arg done "$DONE" \
             --arg review "$REVIEW" \
             --arg progress "$PROGRESS" \
@@ -192,24 +203,35 @@ jobs:
             --arg blockers "$BLOCKED_TEXT" \
             --arg dp "$DOCKPULSE" \
             --arg iot "$IOT" \
+            '[
+              { name: "Done", value: $done, inline: true },
+              { name: "In Review", value: $review, inline: true },
+              { name: "In Progress", value: $progress, inline: true },
+              { name: "Todo", value: $todo, inline: true },
+              { name: "Blocked", value: $blocked, inline: true },
+              { name: "Days Left", value: $days, inline: true },
+              { name: "dockpulse", value: ($dp + " issues"), inline: true },
+              { name: "dockpulse-iot", value: ($iot + " issues"), inline: true },
+              { name: "\u200b", value: "\u200b", inline: true },
+              { name: "PRs Awaiting Review", value: $prs, inline: false }
+            ]
+            + if $blockers != "None" then
+                [{ name: "Blockers", value: $blockers, inline: false }]
+              else [] end')
+
+          PAYLOAD=$(jq -n \
+            --arg sprint "$SPRINT" \
+            --arg date "$DATE_STR" \
+            --arg footer "Generated $DATE_STAMP at $TIMESTAMP CEST" \
+            --argjson fields "$FIELDS" \
             '{
               embeds: [{
-                title: ("DockPulse -- " + $sprint),
+                title: ("DockPulse \u2014 " + $sprint + " | " + $date),
+                url: "https://github.com/orgs/II1302-8/projects/1",
                 color: 3447003,
                 thumbnail: { url: "attachment://ring.png" },
-                fields: [
-                  { name: "Done", value: $done, inline: true },
-                  { name: "In Review", value: $review, inline: true },
-                  { name: "In Progress", value: $progress, inline: true },
-                  { name: "Todo", value: $todo, inline: true },
-                  { name: "Blocked", value: $blocked, inline: true },
-                  { name: "Days Left", value: $days, inline: true },
-                  { name: "PRs Awaiting Review", value: $prs, inline: false },
-                  { name: "Blockers", value: $blockers, inline: false }
-                ],
-                footer: {
-                  text: ("dockpulse: " + $dp + " issues | dockpulse-iot: " + $iot + " issues")
-                }
+                fields: $fields,
+                footer: { text: $footer }
               }]
             }')
 
