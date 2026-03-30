@@ -210,8 +210,8 @@ jobs:
               { name: "Todo", value: $todo, inline: true },
               { name: "Blocked", value: $blocked, inline: true },
               { name: "Days Left", value: $days, inline: true },
-              { name: "dockpulse", value: ($dp + " issues"), inline: true },
-              { name: "dockpulse-iot", value: ($iot + " issues"), inline: true },
+              { name: "dockpulse", value: ("[" + $dp + " issues](https://github.com/II1302-8/dockpulse/issues)"), inline: true },
+              { name: "dockpulse-iot", value: ("[" + $iot + " issues](https://github.com/II1302-8/dockpulse-iot/issues)"), inline: true },
               { name: "\u200b", value: "\u200b", inline: true },
               { name: "PRs Awaiting Review", value: $prs, inline: false }
             ]
