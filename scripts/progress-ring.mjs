@@ -33,7 +33,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${s
   />
   <text
     x="${center}" y="${center}"
-    text-anchor="middle" dominant-baseline="central"
+    text-anchor="middle" dy="0.35em"
     fill="${text}" font-family="sans-serif" font-size="42" font-weight="bold"
   >${percent}%</text>
 </svg>`;
