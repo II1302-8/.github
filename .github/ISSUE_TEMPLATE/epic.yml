@@ -1,0 +1,30 @@
+name: Epic
+description: A parent issue covering a large feature or initiative
+labels: ["epic"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is the goal of this epic?
+    validations:
+      required: true
+  - type: textarea
+    id: subtasks
+    attributes:
+      label: Sub-issues
+      description: Link sub-issues from dockpulse and dockpulse-iot
+      value: |
+        - [ ] II1302-8/dockpulse#
+        - [ ] II1302-8/dockpulse-iot#
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: How do we know this epic is complete?
+      value: |
+        - [ ]
+    validations:
+      required: true

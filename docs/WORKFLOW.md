@@ -4,9 +4,11 @@
 
 - **Branching model**: Branch-based development off `main`.
 - **Branch naming**: `<type>/<issue-number>-short-description`, where type matches the following commit types (`feature/`, `fix/`, `docs/`, `chore/`, `refactor/`).
-- **Merge strategy**: Squash merges only. The PR title becomes the squash commit message on `main`, so it **must** follow the Conventional Commits format. Individual commits on the branch don't need to.
+- **Merge strategy**: Squash merges only. The PR title becomes the squash commit message on `main`, so it **must** follow the Conventional Commits format (enforced by CI). Individual commits on the branch don't need to.
 - **Pull requests**: Every PR requires **at least one approval** before merging to `main`. No direct pushes to `main`. The PR author is responsible for merging after approval.
 - **PR scope**: Keep PRs small and focused on a single concern.
+- **Draft PRs**: Open a draft PR when work is in progress and you want early feedback or visibility. Draft PRs signal that the code is not ready for formal review. Convert to "Ready for review" when the checklist in the PR template is complete.
+- **Ready PRs**: Only mark a PR as ready for review when it is complete, tests pass, and the PR title follows Conventional Commits. This is what triggers the formal review process and the 24-hour response expectation.
 
 ## Commit Messages
 
@@ -83,16 +85,16 @@ Examples:
 
 ## CI — GitHub Actions
 
-> **TBD**
-
-## Meeting Cadence
-
-> **TBD**
+- **PR title validation**: All PRs are checked against the Conventional Commits format using `amannn/action-semantic-pull-request`. Allowed types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`.
 
 ## Definition of Done
 
-> **TBD**
+A task is considered done when **all** of the following are met:
 
-## Conflict Resolution
-
-> **TBD**
+- Code compiles/builds without errors or warnings
+- Code follows the project's style guide and has been formatted
+- All existing tests pass
+- New functionality includes appropriate tests
+- PR has been reviewed and approved by at least one team member
+- PR is squash-merged into `main` with a Conventional Commits title
+- Corresponding GitHub Issue is closed and moved to `Done` on the project board
