@@ -9,12 +9,16 @@ jobs:
   post-summary:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/checkout@v4
+
+      - name: Gather project data
+        id: data
+        uses: actions/github-script@v7
         env:
           FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
           github-token: ${{ secrets.PROJECT_TOKEN }}
+          result-encoding: string
           script: |
             const query = `query {
               organization(login: "II1302-8") {
@@ -60,7 +64,6 @@ jobs:
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            // Parse items and extract field values
             const parsed = items.map(item => {
               const fields = {};
               let sprintStart = null;
@@ -69,7 +72,6 @@ jobs:
               for (const fv of item.fieldValues.nodes) {
                 if (fv.field) {
                   fields[fv.field.name] = fv.name || fv.title;
-
                   if (fv.field.name === 'Sprint' && fv.startDate) {
                     sprintStart = new Date(fv.startDate);
                     sprintEnd = new Date(fv.startDate);
@@ -87,13 +89,12 @@ jobs:
               };
             }).filter(item => item.title);
 
-            // Find current sprint by date range
             const currentSprintItem = parsed.find(item =>
               item.sprintStart && item.sprintStart <= today && today <= item.sprintEnd
             );
 
             if (!currentSprintItem) {
-              console.log('No active sprint found for today');
+              core.setFailed('No active sprint found for today');
               return;
             }
 
@@ -102,10 +103,8 @@ jobs:
               (currentSprintItem.sprintEnd - today) / (1000 * 60 * 60 * 24)
             );
 
-            // Filter to current sprint
             const sprintItems = parsed.filter(i => i.sprint === currentSprint);
 
-            // Count by status
             const counts = { 'Todo': 0, 'In Progress': 0, 'In Review': 0, 'Done': 0 };
             for (const item of sprintItems) {
               if (item.status in counts) counts[item.status]++;
@@ -115,11 +114,6 @@ jobs:
             const doneCount = counts['Done'];
             const percent = total > 0 ? Math.round((doneCount / total) * 100) : 0;
 
-            // Progress bar
-            const filled = Math.round(percent / 5);
-            const bar = '\u2588'.repeat(filled) + '\u2591'.repeat(20 - filled);
-
-            // Query open non-draft PRs across both repos
             const prs = [];
             for (const repo of ['dockpulse', 'dockpulse-iot']) {
               const { data } = await github.rest.pulls.list({
@@ -143,7 +137,6 @@ jobs:
               ? prs.map(p => `[${p.repo}#${p.number}](${p.url}) -- ${p.title}`).join('\n')
               : 'None';
 
-            // Blocked items (issues with "blocked" label)
             const blocked = sprintItems.filter(i =>
               i.labels?.nodes?.some(l => l.name === 'blocked')
             );
@@ -151,35 +144,78 @@ jobs:
               ? blocked.map(i => `[${i.title}](${i.url})`).join('\n')
               : 'None';
 
-            // Per-repo issue counts
             const dockpulseCount = sprintItems.filter(i => i.repository?.name === 'dockpulse').length;
             const iotCount = sprintItems.filter(i => i.repository?.name === 'dockpulse-iot').length;
 
-            // Build Discord embed
-            const embed = {
+            // Write data for subsequent steps
+            const fs = require('fs');
+            const data = {
+              currentSprint, percent, doneCount, total, daysLeft,
+              counts, blocked: blocked.length, prText, blockedText,
+              dockpulseCount, iotCount
+            };
+            fs.writeFileSync('/tmp/summary.json', JSON.stringify(data));
+
+            return String(percent);
+
+      - name: Generate progress ring
+        run: |
+          node scripts/progress-ring.mjs ${{ steps.data.outputs.result }} /tmp/ring.svg
+          sudo apt-get install -y -qq librsvg2-bin > /dev/null 2>&1
+          rsvg-convert /tmp/ring.svg -o /tmp/ring.png
+
+      - name: Post to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          DATA=$(cat /tmp/summary.json)
+
+          SPRINT=$(echo "$DATA" | jq -r '.currentSprint')
+          DONE=$(echo "$DATA" | jq -r '.counts.Done')
+          REVIEW=$(echo "$DATA" | jq -r '.counts["In Review"]')
+          PROGRESS=$(echo "$DATA" | jq -r '.counts["In Progress"]')
+          TODO=$(echo "$DATA" | jq -r '.counts.Todo')
+          BLOCKED=$(echo "$DATA" | jq -r '.blocked')
+          DAYS_LEFT=$(echo "$DATA" | jq -r '.daysLeft')
+          PR_TEXT=$(echo "$DATA" | jq -r '.prText')
+          BLOCKED_TEXT=$(echo "$DATA" | jq -r '.blockedText')
+          DOCKPULSE=$(echo "$DATA" | jq -r '.dockpulseCount')
+          IOT=$(echo "$DATA" | jq -r '.iotCount')
+
+          PAYLOAD=$(jq -n \
+            --arg sprint "$SPRINT" \
+            --arg done "$DONE" \
+            --arg review "$REVIEW" \
+            --arg progress "$PROGRESS" \
+            --arg todo "$TODO" \
+            --arg blocked "$BLOCKED" \
+            --arg days "$DAYS_LEFT" \
+            --arg prs "$PR_TEXT" \
+            --arg blockers "$BLOCKED_TEXT" \
+            --arg dp "$DOCKPULSE" \
+            --arg iot "$IOT" \
+            '{
               embeds: [{
-                title: `DockPulse -- ${currentSprint}`,
-                description: `\`\`\`\n${bar} ${percent}% (${doneCount}/${total})\n\`\`\``,
+                title: ("DockPulse -- " + $sprint),
                 color: 3447003,
+                thumbnail: { url: "attachment://ring.png" },
                 fields: [
-                  { name: 'Done', value: `${counts['Done']}`, inline: true },
-                  { name: 'In Review', value: `${counts['In Review']}`, inline: true },
-                  { name: 'In Progress', value: `${counts['In Progress']}`, inline: true },
-                  { name: 'Todo', value: `${counts['Todo']}`, inline: true },
-                  { name: 'Blocked', value: `${blocked.length}`, inline: true },
-                  { name: 'Days Left', value: `${daysLeft}`, inline: true },
-                  { name: 'PRs Awaiting Review', value: prText, inline: false },
-                  { name: 'Blockers', value: blockedText, inline: false }
+                  { name: "Done", value: $done, inline: true },
+                  { name: "In Review", value: $review, inline: true },
+                  { name: "In Progress", value: $progress, inline: true },
+                  { name: "Todo", value: $todo, inline: true },
+                  { name: "Blocked", value: $blocked, inline: true },
+                  { name: "Days Left", value: $days, inline: true },
+                  { name: "PRs Awaiting Review", value: $prs, inline: false },
+                  { name: "Blockers", value: $blockers, inline: false }
                 ],
                 footer: {
-                  text: `dockpulse: ${dockpulseCount} issues | dockpulse-iot: ${iotCount} issues`
+                  text: ("dockpulse: " + $dp + " issues | dockpulse-iot: " + $iot + " issues")
                 }
               }]
-            };
+            }')
 
-            // Post to Discord
-            await fetch(process.env.DISCORD_WEBHOOK_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(embed)
-            });
+          curl -s -X POST \
+            -F "payload_json=$PAYLOAD" \
+            -F "file=@/tmp/ring.png" \
+            "$DISCORD_WEBHOOK_URL"
