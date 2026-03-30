@@ -19,7 +19,6 @@ const fill = '#5865f2';     // Discord blurple for the progress
 const text = '#ffffff';
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-  <rect width="${size}" height="${size}" rx="16" fill="${bg}"/>
   <circle
     cx="${center}" cy="${center}" r="${radius}"
     fill="none" stroke="${track}" stroke-width="${stroke}"
@@ -33,15 +32,10 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${s
     transform="rotate(-90 ${center} ${center})"
   />
   <text
-    x="${center}" y="${center - 10}"
+    x="${center}" y="${center}"
     text-anchor="middle" dominant-baseline="central"
     fill="${text}" font-family="sans-serif" font-size="42" font-weight="bold"
   >${percent}%</text>
-  <text
-    x="${center}" y="${center + 24}"
-    text-anchor="middle" dominant-baseline="central"
-    fill="${track}" font-family="sans-serif" font-size="16"
-  >complete</text>
 </svg>`;
 
 const fs = await import('fs');
