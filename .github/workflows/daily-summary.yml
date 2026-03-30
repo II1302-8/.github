@@ -148,17 +148,12 @@ jobs:
             // Format date for title
             const dateStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-            // Timestamp for footer
-            const now = new Date();
-            const timestamp = now.toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm', hour: '2-digit', minute: '2-digit' });
-            const dateStamp = now.toLocaleDateString('en-US', { timeZone: 'Europe/Stockholm', month: 'short', day: 'numeric', year: 'numeric' });
-
             // Write data for subsequent steps
             const fs = require('fs');
             const data = {
               currentSprint, percent, doneCount, total, daysLeft,
               counts, blocked: blocked.length, prText, blockedText,
-              dockpulseCount, iotCount, dateStr, timestamp, dateStamp
+              dockpulseCount, iotCount, dateStr, totalIssues: total
             };
             fs.writeFileSync('/tmp/summary.json', JSON.stringify(data));
 
@@ -188,8 +183,6 @@ jobs:
           DOCKPULSE=$(echo "$DATA" | jq -r '.dockpulseCount')
           IOT=$(echo "$DATA" | jq -r '.iotCount')
           DATE_STR=$(echo "$DATA" | jq -r '.dateStr')
-          TIMESTAMP=$(echo "$DATA" | jq -r '.timestamp')
-          DATE_STAMP=$(echo "$DATA" | jq -r '.dateStamp')
 
           # Build fields array conditionally
           FIELDS=$(jq -n \
@@ -219,10 +212,13 @@ jobs:
                 [{ name: "Blockers", value: $blockers, inline: false }]
               else [] end')
 
+          TOTAL=$(echo "$DATA" | jq -r '.totalIssues')
+          PERCENT=$(echo "$DATA" | jq -r '.percent')
+
           PAYLOAD=$(jq -n \
             --arg sprint "$SPRINT" \
             --arg date "$DATE_STR" \
-            --arg footer "Generated $DATE_STAMP at $TIMESTAMP CEST" \
+            --arg footer "$TOTAL issues total | $PERCENT% complete" \
             --argjson fields "$FIELDS" \
             '{
               embeds: [{
