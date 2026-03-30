@@ -13,7 +13,7 @@ Solar-powered sensor nodes equipped with 24 GHz mmWave radar detect vessel prese
 
 ## Architecture
 
-![Architecture](../docs/architecture/architecture.png)
+![Architecture](../docs/architecture/architecture.svg)
 
 ## Quick Links
 
