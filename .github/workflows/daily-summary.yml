@@ -1,0 +1,184 @@
+name: Daily Summary
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # 08:00 CEST (Stockholm)
+  workflow_dispatch: # manual trigger for testing
+
+jobs:
+  post-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          script: |
+            const query = `query {
+              organization(login: "II1302-8") {
+                projectV2(number: 1) {
+                  items(first: 100) {
+                    nodes {
+                      fieldValues(first: 10) {
+                        nodes {
+                          ... on ProjectV2ItemFieldSingleSelectValue {
+                            name
+                            field { ... on ProjectV2SingleSelectField { name } }
+                          }
+                          ... on ProjectV2ItemFieldIterationValue {
+                            title
+                            startDate
+                            duration
+                            field { ... on ProjectV2IterationField { name } }
+                          }
+                        }
+                      }
+                      content {
+                        ... on Issue {
+                          title
+                          url
+                          repository { name }
+                          labels(first: 10) { nodes { name } }
+                        }
+                        ... on PullRequest {
+                          title
+                          url
+                          repository { name }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }`;
+
+            const result = await github.graphql(query);
+            const items = result.organization.projectV2.items.nodes;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Parse items and extract field values
+            const parsed = items.map(item => {
+              const fields = {};
+              let sprintStart = null;
+              let sprintEnd = null;
+
+              for (const fv of item.fieldValues.nodes) {
+                if (fv.field) {
+                  fields[fv.field.name] = fv.name || fv.title;
+
+                  if (fv.field.name === 'Sprint' && fv.startDate) {
+                    sprintStart = new Date(fv.startDate);
+                    sprintEnd = new Date(fv.startDate);
+                    sprintEnd.setDate(sprintEnd.getDate() + fv.duration);
+                  }
+                }
+              }
+
+              return {
+                ...item.content,
+                status: fields['Status'],
+                sprint: fields['Sprint'],
+                sprintStart,
+                sprintEnd
+              };
+            }).filter(item => item.title);
+
+            // Find current sprint by date range
+            const currentSprintItem = parsed.find(item =>
+              item.sprintStart && item.sprintStart <= today && today <= item.sprintEnd
+            );
+
+            if (!currentSprintItem) {
+              console.log('No active sprint found for today');
+              return;
+            }
+
+            const currentSprint = currentSprintItem.sprint;
+            const daysLeft = Math.ceil(
+              (currentSprintItem.sprintEnd - today) / (1000 * 60 * 60 * 24)
+            );
+
+            // Filter to current sprint
+            const sprintItems = parsed.filter(i => i.sprint === currentSprint);
+
+            // Count by status
+            const counts = { 'Todo': 0, 'In Progress': 0, 'In Review': 0, 'Done': 0 };
+            for (const item of sprintItems) {
+              if (item.status in counts) counts[item.status]++;
+            }
+
+            const total = sprintItems.length;
+            const doneCount = counts['Done'];
+            const percent = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+
+            // Progress bar
+            const filled = Math.round(percent / 5);
+            const bar = '\u2588'.repeat(filled) + '\u2591'.repeat(20 - filled);
+
+            // Query open non-draft PRs across both repos
+            const prs = [];
+            for (const repo of ['dockpulse', 'dockpulse-iot']) {
+              const { data } = await github.rest.pulls.list({
+                owner: 'II1302-8',
+                repo,
+                state: 'open'
+              });
+              for (const pr of data) {
+                if (!pr.draft) {
+                  prs.push({
+                    repo,
+                    number: pr.number,
+                    title: pr.title,
+                    url: pr.html_url
+                  });
+                }
+              }
+            }
+
+            const prText = prs.length > 0
+              ? prs.map(p => `[${p.repo}#${p.number}](${p.url}) -- ${p.title}`).join('\n')
+              : 'None';
+
+            // Blocked items (issues with "blocked" label)
+            const blocked = sprintItems.filter(i =>
+              i.labels?.nodes?.some(l => l.name === 'blocked')
+            );
+            const blockedText = blocked.length > 0
+              ? blocked.map(i => `[${i.title}](${i.url})`).join('\n')
+              : 'None';
+
+            // Per-repo issue counts
+            const dockpulseCount = sprintItems.filter(i => i.repository?.name === 'dockpulse').length;
+            const iotCount = sprintItems.filter(i => i.repository?.name === 'dockpulse-iot').length;
+
+            // Build Discord embed
+            const embed = {
+              embeds: [{
+                title: `DockPulse -- ${currentSprint}`,
+                description: `\`\`\`\n${bar} ${percent}% (${doneCount}/${total})\n\`\`\``,
+                color: 3447003,
+                fields: [
+                  { name: 'Done', value: `${counts['Done']}`, inline: true },
+                  { name: 'In Review', value: `${counts['In Review']}`, inline: true },
+                  { name: 'In Progress', value: `${counts['In Progress']}`, inline: true },
+                  { name: 'Todo', value: `${counts['Todo']}`, inline: true },
+                  { name: 'Blocked', value: `${blocked.length}`, inline: true },
+                  { name: 'Days Left', value: `${daysLeft}`, inline: true },
+                  { name: 'PRs Awaiting Review', value: prText, inline: false },
+                  { name: 'Blockers', value: blockedText, inline: false }
+                ],
+                footer: {
+                  text: `dockpulse: ${dockpulseCount} issues | dockpulse-iot: ${iotCount} issues`
+                }
+              }]
+            };
+
+            // Post to Discord
+            await fetch(process.env.DISCORD_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(embed)
+            });
