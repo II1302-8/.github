@@ -11,6 +11,15 @@ Solar-powered sensor nodes equipped with 24 GHz mmWave radar detect vessel prese
 | [dockpulse](https://github.com/II1302-8/dockpulse)         | Backend server, REST API, and web dashboard           |
 | [dockpulse-iot](https://github.com/II1302-8/dockpulse-iot) | ESP32 firmware for sensor nodes and gateway (ESP-IDF) |
 
+## Tech Stack
+
+| Layer    | Stack                                           |
+| -------- | ----------------------------------------------- |
+| Frontend | React, TypeScript, Vite                         |
+| Backend  | FastAPI, SQLAlchemy, PostgreSQL, aiomqtt        |
+| IoT      | ESP32-C3, ESP-IDF, ESP-NOW, 24 GHz mmWave radar |
+| Infra    | Docker Compose, Mosquitto (MQTT), Nginx         |
+
 ## Architecture
 
 ![Architecture](../docs/architecture/architecture.svg)
@@ -19,6 +28,8 @@ Solar-powered sensor nodes equipped with 24 GHz mmWave radar detect vessel prese
 
 - [Project Board](https://github.com/orgs/II1302-8/projects/1) — Kanban board for tracking progress
 - [Workflow Guide](../docs/WORKFLOW.md) — Branching, commits, code style, and review process
+- [MQTT Contract](../docs/mqtt-contract.yml) — Topic structure and payload schemas
+- [Node Hardware](../docs/node-hardware.md) — BOM, pin allocation, power budget
 
 ## Team
 

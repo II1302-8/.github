@@ -39,9 +39,7 @@ Examples:
 
 ## Code Style
 
-> **TBD** — Finalize once the tech stack is decided. Preliminary conventions below.
-
-### C
+### C (IoT firmware)
 
 - **Naming**: `snake_case` for functions and variables, `UPPER_SNAKE_CASE` for constants and macros
 - **Braces**: Opening brace on the same line as the statement
@@ -49,16 +47,24 @@ Examples:
 - **Headers**: Use include guards (`#ifndef HEADER_NAME_H` / `#define` / `#endif`)
 - **Formatter**: `clang-format`
 
-### JavaScript
+### Python (backend)
 
-- **Naming**: `camelCase` for variables and functions, `PascalCase` for components/classes, `UPPER_SNAKE_CASE` for constants
+- **Naming**: `snake_case` for functions and variables, `PascalCase` for classes, `UPPER_SNAKE_CASE` for constants
+- **Indentation**: 4 spaces
+- **Line length**: 88 characters
+- **Formatter/Linter**: [Ruff](https://docs.astral.sh/ruff/)
+
+### TypeScript / React (frontend)
+
+- **Naming**: `camelCase` for variables and functions, `PascalCase` for components/types, `UPPER_SNAKE_CASE` for constants
 - **Indentation**: 2 spaces
 - **Semicolons**: Use them
-- **Formatter/Linter**: Prettier + ESLint
+- **Quotes**: Double quotes
+- **Formatter/Linter**: [Biome](https://biomejs.dev/)
 
 ### General
 
-- Run the formatter before committing. Ideally set up a pre-commit hook or editor integration so it happens automatically.
+- Run the formatter before committing. Pre-commit hooks are set up to run Ruff (backend) and Biome (frontend) automatically.
 - Don't mix style changes with functional changes in the same PR.
 
 ## Code Review
