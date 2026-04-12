@@ -1,0 +1,179 @@
+# DockPulse — MQTT Contract
+#
+# Defines the topics and payload schemas for communication
+# between IoT gateways and the backend server.
+#
+# Broker: Mosquitto (Eclipse)
+# Protocol: MQTT v3.1.1 or v5.0
+# QoS: 1 (at least once) for status updates, 0 for heartbeats
+
+# ─── Topic Structure ─────────────────────────────────────────
+#
+#   harbor/{harbor_id}/{dock_id}/{berth_id}/{message_type}
+#
+# Examples:
+#   harbor/main/dock-a/berth-001/status
+#   harbor/main/dock-a/berth-001/heartbeat
+#   harbor/main/dock-b/+/status          ← subscribe to all berths on dock-b
+#   harbor/main/#                         ← subscribe to everything
+
+topics:
+  # ── Published by: Gateway → Consumed by: Backend ──────────
+
+  - topic: "harbor/{harbor_id}/{dock_id}/{berth_id}/status"
+    direction: gateway → backend
+    description: >
+      Sent when a berth's occupancy state changes.
+      The gateway should debounce sensor readings before publishing
+      (e.g., require 3 consecutive readings over 15 seconds before
+      reporting a state change).
+    qos: 1
+    retain: true
+    payload:
+      type: json
+      schema:
+        node_id:
+          type: string
+          description: Unique identifier of the sensor node
+          example: "node-012"
+        berth_id:
+          type: string
+          description: Berth this reading belongs to
+          example: "berth-001"
+        occupied:
+          type: boolean
+          description: true = boat present, false = berth is free
+          example: true
+        sensor_raw:
+          type: integer
+          description: Raw sensor value (mm distance for ultrasonic/ToF)
+          example: 342
+        battery_pct:
+          type: integer
+          description: Node battery level, 0-100
+          example: 87
+        timestamp:
+          type: string
+          format: iso8601
+          description: UTC timestamp from gateway
+          example: "2026-03-23T14:30:00Z"
+      example: |
+        {
+          "node_id": "node-012",
+          "berth_id": "berth-001",
+          "occupied": true,
+          "sensor_raw": 342,
+          "battery_pct": 87,
+          "timestamp": "2026-03-23T14:30:00Z"
+        }
+
+  - topic: "harbor/{harbor_id}/{dock_id}/{berth_id}/heartbeat"
+    direction: gateway → backend
+    description: >
+      Periodic heartbeat sent every 5 minutes regardless of state change.
+      Used by the backend to detect offline nodes — if no heartbeat is
+      received within 3x the interval (15 min), the node is considered offline.
+    qos: 0
+    retain: false
+    payload:
+      type: json
+      schema:
+        node_id:
+          type: string
+          example: "node-012"
+        berth_id:
+          type: string
+          example: "berth-001"
+        occupied:
+          type: boolean
+          example: true
+        battery_pct:
+          type: integer
+          example: 87
+        uptime_s:
+          type: integer
+          description: Node uptime in seconds since last reboot
+          example: 86400
+        timestamp:
+          type: string
+          format: iso8601
+          example: "2026-03-23T14:30:00Z"
+      example: |
+        {
+          "node_id": "node-012",
+          "berth_id": "berth-001",
+          "occupied": true,
+          "battery_pct": 87,
+          "uptime_s": 86400,
+          "timestamp": "2026-03-23T14:30:00Z"
+        }
+
+  # ── Published by: Backend → Consumed by: Gateway ──────────
+
+  - topic: "harbor/{harbor_id}/{dock_id}/{berth_id}/command"
+    direction: backend → gateway
+    description: >
+      Commands sent from the backend to a specific node via its gateway.
+      Used for LED overrides or requesting an immediate status report.
+    qos: 1
+    retain: false
+    payload:
+      type: json
+      schema:
+        command:
+          type: string
+          enum: [request_status, set_led, reboot]
+          description: The command to execute
+        params:
+          type: object
+          description: Command-specific parameters
+          properties:
+            led_color:
+              type: string
+              enum: [green, red, yellow, off]
+              description: Only for set_led command
+      examples:
+        request_status: |
+          {
+            "command": "request_status"
+          }
+        set_led: |
+          {
+            "command": "set_led",
+            "params": { "led_color": "yellow" }
+          }
+
+  # ── System topics ──────────────────────────────────────────
+
+  - topic: "harbor/{harbor_id}/gateway/{gateway_id}/status"
+    direction: gateway → backend
+    description: >
+      Gateway online/offline status. Published with retain and a
+      last-will message so the backend knows when a gateway disconnects.
+    qos: 1
+    retain: true
+    last_will:
+      payload: '{"status": "offline"}'
+    payload:
+      type: json
+      schema:
+        gateway_id:
+          type: string
+          example: "gw-dock-a"
+        status:
+          type: string
+          enum: [online, offline]
+        ip:
+          type: string
+          description: Gateway's local IP (for diagnostics)
+          example: "192.168.1.42"
+        timestamp:
+          type: string
+          format: iso8601
+      example: |
+        {
+          "gateway_id": "gw-dock-a",
+          "status": "online",
+          "ip": "192.168.1.42",
+          "timestamp": "2026-03-23T14:00:00Z"
+        }
