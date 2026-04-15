@@ -1,12 +1,13 @@
 name: Epic
-description: A parent issue covering a large feature or initiative
-labels: ["epic"]
+description: A parent issue covering a large feature or initiative spanning multiple stories and tasks
+title: "[Epic] "
+labels: ["type:epic"]
 body:
   - type: textarea
     id: description
     attributes:
       label: Description
-      description: What is the goal of this epic?
+      description: What is the goal of this epic? Frame it as a user outcome where possible.
     validations:
       required: true
   - type: textarea

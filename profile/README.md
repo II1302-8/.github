@@ -36,7 +36,7 @@ Solar-powered sensor nodes equipped with 24 GHz mmWave radar detect vessel prese
 | Name                | GitHub                                             | Role(s)                   |
 | ------------------- | -------------------------------------------------- | ------------------------- |
 | Duhan Cigel         | [@Doodlejnoodle](https://github.com/Doodlejnoodle) | IoT lead                  |
-| Elliot Steffensen   | [@xishell](https://github.com/xishell)             | Product owner, IoT dev    |
+| Elliot Steffensen   | [@xishell](https://github.com/xishell)             | Product owner, DevOps, IoT dev |
 | Jacob Wilhelmsson   | [@LellesBodega](https://github.com/LellesBodega)   | Frontend dev              |
 | Karl Andersson      | [@Johnybooi](https://github.com/Johnybooi)         | Scrum master, Backend dev |
 | Pontus Forsman      | [@pntzf](https://github.com/pntzf)                 | Backend lead              |

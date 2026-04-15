@@ -1,7 +1,13 @@
 name: Task
-description: A general task or chore
-labels: ["chore"]
+description: Implementation work, infrastructure, or enabling code. No user story required.
+title: "[Task] "
+labels: ["type:task"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for developer-facing work: backend endpoints consumed by other code, migrations, scaffolds, firmware internals, CI/tooling.
+        If a real end-user would care about this directly, use the **User Story** template instead.
   - type: textarea
     id: description
     attributes:
@@ -16,5 +22,16 @@ body:
       description: How do we know this is done?
       value: |
         - [ ]
+        - [ ]
     validations:
-      required: false
+      required: true
+  - type: input
+    id: enables
+    attributes:
+      label: Enables story
+      description: "Which user story (if any) does this enable? e.g. II1302-8/dockpulse#10. Leave blank if none."
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Dependencies, links, background.

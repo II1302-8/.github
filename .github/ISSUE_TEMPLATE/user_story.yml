@@ -1,0 +1,52 @@
+name: User Story
+description: A user-facing piece of value. Pick a persona and describe the benefit they get.
+title: "[Story] "
+labels: ["type:story"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Pick a persona from [PERSONAS.md](https://github.com/II1302-8/.github/blob/main/PERSONAS.md).
+        Frame the story from the user's perspective, not the developer's.
+        Acceptance criteria should be **black-box, user-observable behavior** — not implementation details.
+  - type: dropdown
+    id: persona
+    attributes:
+      label: Persona
+      description: Who is this story for?
+      options:
+        - Visiting boater
+        - Harbor master
+        - Berth tenant
+        - Harbor maintenance
+    validations:
+      required: true
+  - type: textarea
+    id: story
+    attributes:
+      label: Story
+      description: "As a <persona>, I want <goal>, so that <benefit>."
+      placeholder: "As a visiting boater, I want to see which berths are free, so I can head straight to an open spot."
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: What must be true for this story to be Done? Written from the user's point of view.
+      value: |
+        - [ ]
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: technical
+    attributes:
+      label: Technical notes
+      description: Hints for implementers — library choices, dependencies, data sources. Not acceptance criteria.
+  - type: input
+    id: demo
+    attributes:
+      label: Demo script
+      description: "How would a reviewer see this working in sprint review? One sentence."
