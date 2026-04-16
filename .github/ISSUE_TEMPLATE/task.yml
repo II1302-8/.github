@@ -1,7 +1,7 @@
 name: Task
 description: Implementation work, infrastructure, or enabling code. No user story required.
 title: "[Task] "
-labels: ["type:task"]
+type: Task
 body:
   - type: markdown
     attributes:

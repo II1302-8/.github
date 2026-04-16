@@ -1,0 +1,53 @@
+name: Spike
+description: A timeboxed investigation that outputs a decision, an ADR, or a prototype — not shipped code
+title: "[Spike] "
+type: Spike
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Spikes resolve a question before a feature can be built. Scope should be small and time-boxed.
+        The output is always an artifact that unblocks other work: an ADR, a decision record, a proof-of-concept, or a follow-up issue.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question to answer
+      description: What decision does this spike unblock?
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options considered
+      description: Candidate approaches and their tradeoffs. Leave blank if the spike is itself about discovering options.
+      value: |
+        - Option A —
+        - Option B —
+    validations:
+      required: false
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: What artifact(s) will this spike produce? (ADR, PoC, follow-up issue, config draft, etc.)
+      value: |
+        - ADR at `docs/adr/NNN-<slug>.md`
+        - Follow-up issue capturing agreed approach
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: How do we know this spike is done?
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Dependencies, links, related issues.
+    validations:
+      required: false

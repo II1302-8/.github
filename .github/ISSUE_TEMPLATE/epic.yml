@@ -1,7 +1,7 @@
 name: Epic
 description: A parent issue covering a large feature or initiative spanning multiple stories and tasks
 title: "[Epic] "
-labels: ["type:epic"]
+type: Epic
 body:
   - type: textarea
     id: description
