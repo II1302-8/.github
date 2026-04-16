@@ -1,0 +1,75 @@
+name: PR Review Notify
+
+on:
+  workflow_call:
+    secrets:
+      DISCORD_PR_WEBHOOK_URL:
+        required: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - name: Collect reviewers and notify
+        uses: actions/github-script@v8
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_PR_WEBHOOK_URL }}
+          DISCORD_MAP: ${{ vars.DISCORD_USER_MAP }}
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const map = JSON.parse(process.env.DISCORD_MAP || '{}');
+
+            const reviewers = pr.requested_reviewers.map(r => r.login);
+
+            if (reviewers.length === 0) {
+              console.log('No reviewers requested, skipping notification.');
+              return;
+            }
+
+            const discordIds = [];
+            const mentions = reviewers.map(gh => {
+              const id = map[gh];
+              if (id) {
+                discordIds.push(id);
+                return `<@${id}>`;
+              }
+              return `\`${gh}\``;
+            });
+
+            const repo = `${context.repo.owner}/${context.repo.repo}`;
+
+            const payload = {
+              content: mentions.join(' '),
+              embeds: [{
+                title: `${pr.title}`,
+                url: pr.html_url,
+                color: 5814783,
+                author: {
+                  name: pr.user.login,
+                  url: pr.user.html_url,
+                  icon_url: pr.user.avatar_url
+                },
+                fields: [
+                  { name: 'Repository', value: `[${repo}](https://github.com/${repo})`, inline: true },
+                  { name: 'Reviewers', value: mentions.join(', '), inline: true }
+                ],
+                footer: { text: `#${pr.number} | +${pr.additions} -${pr.deletions} | ${pr.changed_files} file(s)` },
+                timestamp: pr.created_at
+              }],
+              allowed_mentions: {
+                users: discordIds
+              }
+            };
+
+            const resp = await fetch(process.env.DISCORD_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+
+            if (!resp.ok) {
+              const body = await resp.text();
+              core.setFailed(`Discord webhook failed (${resp.status}): ${body}`);
+            }
