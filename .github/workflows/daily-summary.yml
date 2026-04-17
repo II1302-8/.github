@@ -2,7 +2,7 @@ name: Daily Summary
 
 on:
   schedule:
-    - cron: "0 6 * * *" # 08:00 CEST (Stockholm)
+    - cron: "0 5 * * *" # 07:00 CEST (Stockholm)
   workflow_dispatch: # manual trigger for testing
 
 jobs:
