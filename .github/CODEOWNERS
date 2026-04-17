@@ -1,0 +1,24 @@
+# Org-level CODEOWNERS for II1302-8
+# Applies to this repo AND acts as default for any II1302-8 repo without its own CODEOWNERS.
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-security/customizing-your-repository/about-code-owners
+# Last matching pattern wins. Patterns are relative to repo root.
+
+# Fallback — maintainer / system architect
+*                           @XiShell
+
+# Org profile / public landing
+/profile/**                 @XiShell
+
+# Architecture & cross-cutting docs
+/docs/architecture/**       @XiShell
+/docs/WORKFLOW.md           @XiShell
+
+# Shared contracts — need both sides to review
+/docs/mqtt-contract.yml     @XiShell @Doodlejnoodle @Johnybooi @pntzf
+
+# Hardware / node docs — IoT team
+/docs/node-hardware.md      @Doodlejnoodle @XiShell
+
+# Issue templates, workflows, scripts
+/.github/**                 @XiShell
+/scripts/**                 @XiShell
