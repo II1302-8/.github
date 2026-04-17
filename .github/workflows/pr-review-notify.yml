@@ -9,7 +9,10 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
-    if: ${{ !github.event.pull_request.draft }}
+    if: >
+      ${{ !github.event.pull_request.draft &&
+          github.event.pull_request.requested_reviewers[0].login ==
+          github.event.requested_reviewer.login }}
     steps:
       - name: Collect reviewers and notify
         uses: actions/github-script@v8
