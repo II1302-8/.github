@@ -1,6 +1,6 @@
 # Sensor Node Hardware
 
-Hardware specification for a single DockPulse berth sensor node. Each node detects vessel presence using a 24 GHz mmWave radar and communicates with the gateway via ESP-NOW.
+Hardware specification for a single DockPulse berth sensor node. Each node detects vessel presence using a 24 GHz mmWave radar and communicates with the gateway via BLE Mesh.
 
 ## Bill of Materials
 
@@ -10,7 +10,7 @@ Quantities are per node unless noted. Total order includes parts for 3 sensor no
 
 | Component                                     | Role                   | Qty | Notes                                                    |
 | --------------------------------------------- | ---------------------- | --- | -------------------------------------------------------- |
-| ESP32-C3 Mini dev board                       | Microcontroller        | 1   | Wi-Fi + BLE, ESP-NOW capable, deep sleep ~5 uA, RISC-V   |
+| ESP32-C3 Mini dev board                       | Microcontroller        | 1   | Wi-Fi + BLE Mesh capable, deep sleep ~5 uA, RISC-V       |
 | 24 GHz mmWave radar module                    | Presence detection     | 1   | UART output, runs on 3.3V from ESP32-C3                  |
 | Dual-color LED 5mm red/green (common cathode) | Berth status indicator | 1   | Green = free, red = occupied                             |
 | Resistor 100 Ohm 1W (LED current limiting)    | LED current limiting   | 2   | One per LED color                                        |
@@ -19,7 +19,7 @@ Quantities are per node unless noted. Total order includes parts for 3 sensor no
 | TP4056 USB-micro charger module               | Charge controller      | 1   | LiPo-safe charging from solar panel                      |
 | Resistor 10 kOhm 0.1W SMD 0603                | TP4056 R3 replacement  | 1   | Adjusts charge current to match solar panel input        |
 | Resistor 100 kOhm 1W (voltage divider)        | Battery level sensing  | 1   | On ADC pin, used to report battery percentage to backend |
-| Electrolytic capacitor 100 uF 16V             | Power smoothing        | 1   | Smooths supply during ESP-NOW transmit current spikes    |
+| Electrolytic capacitor 100 uF 16V             | Power smoothing        | 1   | Smooths supply during radio transmit current spikes      |
 | N-channel MOSFET SOT-23 (e.g. 2N7002)         | Sensor power switch    | 1   | GPIO-driven, cuts radar power during deep sleep          |
 | QR code sticker                               | Provisioning identity  | 1   | Printed at flash time, stuck on enclosure                |
 
@@ -27,7 +27,7 @@ Quantities are per node unless noted. Total order includes parts for 3 sensor no
 
 | Component               | Role            | Qty | Notes                                       |
 | ----------------------- | --------------- | --- | ------------------------------------------- |
-| ESP32-C3 Mini dev board | Microcontroller | 1   | Receives ESP-NOW, publishes MQTT over Wi-Fi |
+| ESP32-C3 Mini dev board | Microcontroller | 1   | Receives BLE Mesh, publishes MQTT over Wi-Fi |
 
 ### Spare / Fallback
 
@@ -77,7 +77,7 @@ An N-channel MOSFET (e.g. 2N7002 in SOT-23) on GPIO 0 switches the radar's groun
 | State                             | Current Draw | Duration per Cycle |
 | --------------------------------- | ------------ | ------------------ |
 | Deep sleep (radar off via MOSFET) | ~5 uA        | ~28s               |
-| Active (radar on + ESP-NOW TX)    | ~150 mA      | ~2s                |
+| Active (radar on + mesh TX)       | ~150 mA      | ~2s                |
 
 Radar module (Waveshare HMMD): 50 mA average operating current.
 

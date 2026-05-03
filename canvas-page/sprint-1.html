@@ -1,0 +1,605 @@
+<h1 class="page-title">
+  <span style="font-size: 12pt"
+    ><strong>IMPORTANT:</strong><span>&nbsp;</span>All content (e.g., documents,
+    figures) must be uploaded to Canvas, i.e., you must not link to external
+    sites</span
+  >
+</h1>
+<div id="todo-date-mount-point"></div>
+<h2>Sprint planning</h2>
+<h3>Schedule</h3>
+<ul>
+  <li>Date 1: Tuesday, 14 April 2026</li>
+  <li>Time: 10:00-13:00</li>
+  <li>Location: V-house, Room 167</li>
+  <li>Date 2 (complementary): Wednesday, 15 April 2026</li>
+  <li>Time: 13:00-17:00</li>
+  <li>Location: Q-house. Room Q31</li>
+</ul>
+<h3>Sprint goal</h3>
+<p>
+  A user should be able to view berth availability as well as details about
+  specific berths.
+</p>
+<h3>Sprint backlog</h3>
+<ul>
+  <li>
+    User story 1:<br />As a visiting boater, I want to see which berths are free
+    at a glance on a harbor map, so I can head straight to an open spot without
+    walking the dock.
+    <ul>
+      <li>
+        User sub-story 1:<br />As a visiting boater, I want the map to show the
+        current / live state of berths when I open it, so I trust that what I
+        see is real and not stale.&nbsp;
+      </li>
+    </ul>
+  </li>
+  <li>
+    User story 2:<br />As a visiting boater, I want to tap a berth to see its
+    details, so I can decide whether it suits my boat before heading over.
+  </li>
+</ul>
+<hr />
+<h2>Daily scrum 1</h2>
+<h3>Schedule</h3>
+<ul>
+  <li>Date: Friday, 17 April 2026</li>
+  <li>Time: 10:00-12:00</li>
+  <li>Location: Q-house - Corridor / Discord</li>
+</ul>
+<h3>Summary</h3>
+<ul>
+  <li>
+    Progress
+    <ul>
+      <li>
+        Duhan Cigel<br />
+        <ul>
+          <li>
+            What I accomplished since the last Sprint event
+            <ul>
+              <li>I learnt about MQTT and mosquitto</li>
+            </ul>
+          </li>
+          <li>
+            What I plan to do until the next Sprint event
+            <ul>
+              <li>Work on RestAPI and how to list docks</li>
+            </ul>
+          </li>
+          <li>
+            Any obstacles/impediments
+            <ul>
+              <li>Yes, but Elliot helped me</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<ul>
+  <li style="list-style-type: none">
+    <ul>
+      <li>
+        Elliot Steffensen<br />
+        <ul>
+          <li>
+            What I accomplished since the last Sprint event
+            <ul>
+              <li>Implemented two tasks: MQTT subscriber and event handler</li>
+            </ul>
+          </li>
+          <li>
+            What I plan to do until the next Sprint event
+            <ul>
+              <li>I plan to continue working on our deployment strategy</li>
+            </ul>
+          </li>
+          <li>
+            Any obstacles/impediments
+            <ul>
+              <li>None</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        Jacob Wilhelmsson<br />
+        <ul>
+          <li>
+            What I accomplished since the last Sprint event
+            <ul>
+              <li>Started on the first frontend page.</li>
+            </ul>
+          </li>
+          <li>
+            What I plan to do until the next Sprint event
+            <ul>
+              <li>Finish the page.</li>
+            </ul>
+          </li>
+          <li>
+            Any obstacles/impediments
+            <ul>
+              <li>No, It's a matter of time before completion</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        Karl Andersson<br />
+        <ul>
+          <li>
+            What I accomplished since the last Sprint event
+            <ul>
+              <li>
+                As of the daily scrum Friday morning, I had not had the time to
+                do anything since the sprint planning meeting Wednesday evening,
+                due to a deadline in another course on Thursday
+              </li>
+            </ul>
+          </li>
+          <li>
+            What I plan to do until the next Sprint event
+            <ul>
+              <li>
+                I will implement the list of berths and the berth detail
+                endpoint in the REST API
+              </li>
+            </ul>
+          </li>
+          <li>
+            Any obstacles/impediments
+            <ul>
+              <li>Other obstructing courses.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        Pontus Forsman<br />
+        <ul>
+          <li>What I accomplished since the last Sprint event</li>
+          <li>What I plan to do until the next Sprint event</li>
+          <li>Any obstacles/impediments</li>
+        </ul>
+      </li>
+      <li>
+        Roble Yusuf Mohamud<br />
+        <ul>
+          <li>
+            What I accomplished since the last Sprint event
+            <ul>
+              <li>Nothing since I was sick on Wednesday and Thursday</li>
+            </ul>
+          </li>
+          <li>
+            What I plan to do until the next Sprint event
+            <ul>
+              <li>To implement the map feature + start with berth details</li>
+            </ul>
+          </li>
+          <li>
+            Any obstacles/impediments
+            <ul>
+              <li>Unfortunate timing</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    Scrum board review (update tasks in progress, done, blocked)
+    <ul>
+      <li>Done</li>
+    </ul>
+  </li>
+  <li>
+    Sprint goal review (How close are we to hitting our sprint goals?)
+    <ul>
+      <li>40%</li>
+    </ul>
+  </li>
+</ul>
+<hr />
+<h2>Daily scrum 2</h2>
+<h3>Schedule</h3>
+<ul>
+  <li>Date: Monday, 20 April 2026</li>
+  <li>Time: 11:00-13:00</li>
+  <li>Location: Digitally - Discord</li>
+</ul>
+<h3>Summary</h3>
+<ul>
+  <li>Progress</li>
+</ul>
+<ul>
+  <li style="list-style-type: none">
+    <ul>
+      <li>
+        Duhan Cigel<br />
+        <ul>
+          <li>
+            What I accomplished since the last Sprint event
+            <ul>
+              <li>begun working on another task and I am almost done</li>
+            </ul>
+          </li>
+          <li>
+            What I plan to do until the next Sprint event
+            <ul>
+              <li>Finalize the task</li>
+            </ul>
+          </li>
+          <li>
+            Any obstacles/impediments
+            <ul>
+              <li>no</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<ul>
+  <li style="list-style-type: none">
+    <ul>
+      <li>
+        Elliot Steffensen<br />
+        <ul>
+          <li>
+            What I accomplished since the last Sprint event
+            <ul>
+              <li>Finished automatic deployments from main</li>
+            </ul>
+          </li>
+          <li>
+            What I plan to do until the next Sprint event
+            <ul>
+              <li>
+                I plan to continue onto our prod deployment for our demo
+                presentation
+              </li>
+            </ul>
+          </li>
+          <li>
+            Any obstacles/impediments
+            <ul>
+              <li>None</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        Jacob Wilhelmsson<br />
+        <ul>
+          <li>
+            What I accomplished since the last Sprint event<br />
+            <ul>
+              <li>
+                I finished the feature
+                "create-initial-dashboard-viewfeature"&nbsp;<span>
+                  and started working on</span
+                ><span>&nbsp;"connect-map-to-berths-rest-api"&nbsp;</span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            What I plan to do until the next Sprint event<br />
+            <ul>
+              <li>
+                Finish the implementation of
+                <span
+                  >"connect-map-to-berths-rest-api" and start on feature
+                  "Implement-berth-detail-view-on-click"</span
+                >
+              </li>
+            </ul>
+          </li>
+          <li>
+            Any obstacles/impediments
+            <ul>
+              <li>
+                I'm having a bit of a hard time with commiting. Issues with WSL
+                and the formatter "Biome" in an Windows environment.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        Karl Andersson<br />
+        <ul>
+          <li>
+            What I accomplished since the last Sprint event
+            <ul>
+              <li>
+                Almost finished with #34 and #6 (creating 2 different endpoints)
+              </li>
+            </ul>
+          </li>
+          <li>
+            What I plan to do until the next Sprint event
+            <ul>
+              <li>
+                The thing that is left is to serve data from the database,
+                rather than dummy data from my local computer.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Any obstacles/impediments
+            <ul>
+              <li>
+                I don't know how to serve database data using python and
+                fastAPI. Elliot will help me
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        Pontus Forsman<br />
+        <ul>
+          <li>What I accomplished since the last Sprint event</li>
+          <li>What I plan to do until the next Sprint event</li>
+          <li>Any obstacles/impediments</li>
+        </ul>
+      </li>
+      <li>
+        Roble Yusuf Mohamud<br />
+        <ul>
+          <li>
+            What I accomplished since the last Sprint event
+            <ul>
+              <li>I implemented A harbor map with color coded berths.</li>
+            </ul>
+          </li>
+          <li>
+            What I plan to do until the next Sprint event
+            <ul>
+              <li>
+                Try to help other people with their tasks, if they need my help.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Any obstacles/impediments
+            <ul>
+              <li>
+                Not really, just discuss what we need to do before starting our
+                work so we do what is expected of us.&nbsp;
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<ul>
+  <li>
+    Scrum board review (update tasks in progress, done, blocked)
+    <ul>
+      <li>Done</li>
+    </ul>
+  </li>
+  <li>
+    Sprint goal review (How close are we to hitting our sprint goals?)
+    <ul>
+      <li>90%</li>
+    </ul>
+  </li>
+</ul>
+<hr />
+<h2>Sprint review</h2>
+<h3>Schedule</h3>
+<ul>
+  <li>Date: Tuesday, 21 April 2026</li>
+  <li>Time: 12:00-15:00</li>
+  <li>Location: Q-house -&nbsp; Room Q22</li>
+</ul>
+<h3>Summary</h3>
+<p>
+  <span>We have the hardware and </span
+  ><span
+    class="mention wrapper_f61d60 interactive"
+    role="button"
+    aria-expanded="false"
+    >Elliot</span
+  ><span> is responsible for the hardware</span>
+</p>
+<ul>
+  <li>
+    Sprint backlog review
+    <ul>
+      <li>
+        <span>Completed Sprint backlogs</span>&nbsp;
+        <ul>
+          <li>
+            As a visiting boater, I want to see which berths are free at a
+            glance on a harbor map, so I can head straight to an open spot
+            without walking the dock
+          </li>
+        </ul>
+      </li>
+      <li>
+        Incompleted Sprint backlogs
+        <ul>
+          <li>
+            As a visiting boater, I want to tap a berth to see its details, so I
+            can decide whether it suits my boat before heading over.
+            <ul>
+              <li>
+                one backlog task is in review (will get checked this evening)
+              </li>
+              <li>
+                one backlog task not done (just the API endpoint to check node
+                health, everything else was done or in review)
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    Discuss problems and opportunities
+    <ul>
+      <li>Elliot plans on deploying to https://dockpulse.xyz</li>
+      <li>
+        <span
+          >Next time we could try to make the prod site update manually, for
+          better presentation (instead of randomization for berth availability
+          changes)</span
+        >
+        <ul>
+          <li>
+            <span>Try to find solutions so it doesn't sabotage workflow </span
+            ><span
+              >production on windows computers are slow and issues exist</span
+            >
+          </li>
+        </ul>
+      </li>
+      <li>
+        <span>T</span
+        ><span
+          >ry to have more thorough analysis of the PBI to ensure each tasks is
+          byte-sized</span
+        >
+      </li>
+    </ul>
+  </li>
+  <li>
+    Product backlog review
+    <ul>
+      <li>
+        The product owner identifies the top product backlog items and briefly
+        discusses whether changes are needed.
+        <ul>
+          <li>
+            Everything looks fine, all items were doable. Sprint 1 went well
+          </li>
+        </ul>
+      </li>
+      <li>
+        The product owner solicits opinions but avoids making a decision on the
+        spot, as they usually need time to think and obtain estimates for the
+        changes.
+        <ul>
+          <li>We have reasonable amount of points</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<hr />
+<h2>Presentation</h2>
+<h3>Schedule</h3>
+<ul>
+  <li>Date: Wednesday, 22 April 2026</li>
+  <li>Time: 10:00-11:00</li>
+  <li>Location: U51</li>
+</ul>
+<h3>Summary</h3>
+<ul>
+  <li>
+    <a
+      class="instructure_file_link instructure_scribd_file inline_disabled"
+      title="sprint-1-presentation.pdf"
+      href="https://canvas.kth.se/groups/378591/files/10311893?wrap=1"
+      target="_blank"
+      rel="noopener"
+      data-canvas-previewable="false"
+      data-api-endpoint="https://canvas.kth.se/api/v1/groups/378591/files/10311893"
+      data-api-returntype="File"
+      >sprint-1-presentation.pdf</a
+    >
+  </li>
+</ul>
+<hr />
+<h2>Sprint retrospective</h2>
+<h3>Schedule</h3>
+<ul>
+  <li>Date: Wednesday, 22 April 2026</li>
+  <li>Time: 16:00-17:00</li>
+  <li>Location: Room: A367 Morse</li>
+</ul>
+<h3>Summary</h3>
+<ul>
+  <li>
+    Sprint rating
+    <ul>
+      <li><span>4, 5, 4, 4, 5</span></li>
+    </ul>
+  </li>
+  <li>
+    What went well?
+    <ul>
+      <li>
+        <span><span>Collaboration went well</span></span>
+      </li>
+      <li>
+        <span><span>Good communication</span></span>
+      </li>
+      <li>
+        <span><span>Good, structured infrastructure</span></span>
+      </li>
+    </ul>
+  </li>
+  <li>
+    What didn't go as well or could have been better?
+    <ul>
+      <li>
+        <span><span>Windows compatibility with the workflow</span></span>
+      </li>
+      <li>
+        <span><span>Difficult to learn the tech stack</span></span>
+      </li>
+      <li>
+        <span><span>Sickness</span></span>
+      </li>
+      <li>
+        <span
+          ><span
+            >Note taking on the meetings could get a better structure</span
+          ></span
+        >
+      </li>
+    </ul>
+  </li>
+  <li>
+    What improvements will the team try in the next sprint?
+    <ul>
+      <li>
+        <span
+          ><span
+            >Shared knowledge, everyone has a responsibility to make sure they
+            know and understand what the team is up to. Inform the team on
+            time</span
+          ></span
+        >
+      </li>
+      <li>
+        <span
+          ><span
+            >Clear and structured meeting notes, personal responsibility</span
+          ></span
+        >
+      </li>
+      <li>
+        <span
+          ><span
+            >Better instructions for those on windows (Try cloning the repo in
+            WSL)</span
+          ></span
+        >
+      </li>
+    </ul>
+  </li>
+</ul>
