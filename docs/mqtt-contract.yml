@@ -294,3 +294,46 @@ topics:
               "code": "timeout",
               "msg": "no PB-ADV beacon from device"
             }
+
+  - topic: "dockpulse/v1/gw/{gateway_id}/decommission/req"
+    direction: backend → gateway
+    description: >
+      Tells a gateway that a previously-adopted node has been retired by
+      the operator (POST /api/nodes/{id}/decommission). The gateway must
+      drop its unicast_addr → berth_id mapping so subsequent mesh data
+      from that node is no longer forwarded as berth telemetry. Fire and
+      forget — backend does not wait for an ack. The sensor itself keeps
+      running until physically factory-reset; this topic only stops the
+      gateway from acting on its data.
+    qos: 1
+    retain: false
+    payload:
+      type: json
+      schema:
+        req_id:
+          type: string
+          description: >
+            Idempotency key. Gateway may dedupe by req_id but the operation
+            is itself idempotent (forgetting an unknown unicast is a no-op).
+          example: "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c"
+        node_id:
+          type: string
+          description: Backend node id, included for log correlation
+          example: "node-012"
+        unicast_addr:
+          type: string
+          description: Mesh unicast addr to forget, hex
+          example: "0x0042"
+        berth_id:
+          type: string
+          description: >
+            Berth the node was bound to, included so the gateway can drop
+            the right mapping even if it doesn't track unicast addrs.
+          example: "berth-001"
+      example: |
+        {
+          "req_id": "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c",
+          "node_id": "node-012",
+          "unicast_addr": "0x0042",
+          "berth_id": "berth-001"
+        }
