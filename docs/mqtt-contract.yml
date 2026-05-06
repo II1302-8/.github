@@ -280,8 +280,23 @@ topics:
                 Machine-readable failure reason. Defined codes — busy
                 (another flow active), bad-uuid / bad-oob (malformed
                 input), start-fail (mesh stack rejected start), timeout
-                (no on-air completion within ttl_s), unknown (fallback).
-              enum: [busy, bad-uuid, bad-oob, start-fail, timeout, unknown]
+                (no on-air completion within ttl_s), already-provisioned
+                (the gateway already has this UUID in its provisioner
+                table; node must be decommissioned or factory-reset
+                before it can beacon again), cancelled (backend cancelled
+                the pending request via POST /api/adoptions/{id}/cancel),
+                unknown (fallback).
+              enum:
+                [
+                  busy,
+                  bad-uuid,
+                  bad-oob,
+                  start-fail,
+                  timeout,
+                  already-provisioned,
+                  cancelled,
+                  unknown,
+                ]
               example: "timeout"
             msg:
               type: string
