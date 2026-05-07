@@ -44,12 +44,25 @@ topics:
       schema:
         node_id:
           type: string
-          description: Unique identifier of the sensor node
+          description: >
+            Compile-time sensor identifier ("node-NNN"). Useful for log
+            correlation but is NOT a stable identity across firmware
+            re-flashes — use mesh_unicast_addr for authoritative routing.
           example: "node-012"
         berth_id:
           type: string
           description: Berth this reading belongs to
           example: "berth-001"
+        mesh_unicast_addr:
+          type: string
+          required: true
+          description: >
+            BLE-mesh unicast address of the publishing node, hex-encoded
+            with 0x prefix. Backend cross-checks this against the Node row
+            registered for berth_id and rejects readings from any other
+            unicast, defending against rogue nodes publishing to a berth
+            they aren't bound to.
+          example: "0x0042"
         occupied:
           type: boolean
           description: true = boat present, false = berth is free
@@ -71,6 +84,7 @@ topics:
         {
           "node_id": "node-012",
           "berth_id": "berth-001",
+          "mesh_unicast_addr": "0x0042",
           "occupied": true,
           "sensor_raw": 342,
           "battery_pct": 87,
@@ -94,6 +108,11 @@ topics:
         berth_id:
           type: string
           example: "berth-001"
+        mesh_unicast_addr:
+          type: string
+          required: true
+          description: See status payload.
+          example: "0x0042"
         occupied:
           type: boolean
           example: true
@@ -112,6 +131,7 @@ topics:
         {
           "node_id": "node-012",
           "berth_id": "berth-001",
+          "mesh_unicast_addr": "0x0042",
           "occupied": true,
           "battery_pct": 87,
           "uptime_s": 86400,
@@ -359,11 +379,12 @@ topics:
     description: >
       Tells a gateway that a previously-adopted node has been retired by
       the operator (POST /api/nodes/{id}/decommission). The gateway must
-      drop its unicast_addr → berth_id mapping so subsequent mesh data
-      from that node is no longer forwarded as berth telemetry. Fire and
-      forget — backend does not wait for an ack. The sensor itself keeps
-      running until physically factory-reset; this topic only stops the
-      gateway from acting on its data.
+      send a Config Node Reset to the node (best-effort, asleep nodes may
+      miss it) and drop its unicast_addr → berth_id mapping so subsequent
+      mesh data from that node is no longer forwarded as berth telemetry.
+      The gateway publishes decommission/resp once local cleanup completes;
+      backend uses it to detect divergence between DB status and mesh
+      state.
     qos: 1
     retain: false
     payload:
@@ -396,3 +417,74 @@ topics:
           "unicast_addr": "0x0042",
           "berth_id": "berth-001"
         }
+
+  - topic: "dockpulse/v1/gw/{gateway_id}/decommission/resp"
+    direction: gateway → backend
+    description: >
+      Result of a decommission/req. Backend matches on req_id and uses
+      it to detect divergence — on err, the DB status flip is reverted
+      so the operator can retry rather than have the UI lie about a node
+      that's still on the mesh. Sent at most once per req_id.
+    qos: 1
+    retain: false
+    payload:
+      type: json
+      one_of:
+        - description: Successful decommission (Config Node Reset sent, local cleanup done)
+          schema:
+            req_id:
+              type: string
+              example: "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c"
+            node_id:
+              type: string
+              description: >
+                Echoed from req so backend can correlate without tracking
+                req_id → node_id state.
+              example: "node-012"
+            status:
+              type: string
+              enum: [ok]
+          example: |
+            {
+              "req_id": "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c",
+              "node_id": "node-012",
+              "status": "ok"
+            }
+        - description: Decommission failure
+          schema:
+            req_id:
+              type: string
+            node_id:
+              type: string
+              description: Echoed from req. May be absent on bad-req.
+            status:
+              type: string
+              enum: [err]
+            code:
+              type: string
+              description: >
+                Machine-readable failure reason. Defined codes — bad-req
+                (required field missing or unparseable in the req payload),
+                bad-unicast (unicast_addr malformed or out of mesh range),
+                nvs-write (local provisioner table cleanup failed), unknown
+                (fallback).
+              enum:
+                [
+                  bad-req,
+                  bad-unicast,
+                  nvs-write,
+                  unknown,
+                ]
+              example: "nvs-write"
+            msg:
+              type: string
+              description: Optional human-readable detail
+              example: "esp_err=0x102"
+          example: |
+            {
+              "req_id": "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c",
+              "node_id": "node-012",
+              "status": "err",
+              "code": "nvs-write",
+              "msg": "esp_err=0x102"
+            }
