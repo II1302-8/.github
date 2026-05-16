@@ -45,10 +45,13 @@ topics:
         node_id:
           type: string
           description: >
-            Compile-time sensor identifier ("node-NNN"). Useful for log
-            correlation but is NOT a stable identity across firmware
-            re-flashes — use mesh_unicast_addr for authoritative routing.
-          example: "node-012"
+            Backend-assigned stable identifier (uuid) handed to the gateway
+            in the provision/req that adopted this node. The gateway must
+            echo it verbatim here so the backend can bind the reading to
+            the exact Node row, surviving mesh-layer unicast reassignment.
+            A firmware factory-reset wipes the persisted value; re-adoption
+            issues a fresh uuid via the next provision/req.
+          example: "e9c41985-5df8-47bc-9888-672714dc0fc5"
         berth_id:
           type: string
           description: Berth this reading belongs to
@@ -82,7 +85,7 @@ topics:
           example: "2026-03-23T14:30:00Z"
       example: |
         {
-          "node_id": "node-012",
+          "node_id": "e9c41985-5df8-47bc-9888-672714dc0fc5",
           "berth_id": "berth-001",
           "mesh_unicast_addr": "0x0042",
           "occupied": true,
@@ -104,7 +107,8 @@ topics:
       schema:
         node_id:
           type: string
-          example: "node-012"
+          description: See status payload.
+          example: "e9c41985-5df8-47bc-9888-672714dc0fc5"
         berth_id:
           type: string
           example: "berth-001"
@@ -129,7 +133,7 @@ topics:
           example: "2026-03-23T14:30:00Z"
       example: |
         {
-          "node_id": "node-012",
+          "node_id": "e9c41985-5df8-47bc-9888-672714dc0fc5",
           "berth_id": "berth-001",
           "mesh_unicast_addr": "0x0042",
           "occupied": true,
@@ -240,13 +244,26 @@ topics:
             provisioning succeeds. When omitted, gateway falls back to
             using the mesh unicast addr as the berth identifier on uplink.
           example: "berth-001"
+        node_id:
+          type: string
+          description: >
+            Backend-assigned stable identifier (uuid) the gateway must
+            persist alongside the per-node entry (keyed by mesh unicast
+            addr) and echo verbatim in every harbor/.../status and
+            harbor/.../heartbeat payload as the `node_id` field. Lets the
+            backend bind an uplink to the exact Node row provisioned in
+            this round, even after a mesh-layer unicast reassignment. A
+            firmware factory-reset wipes this; re-adoption issues a new
+            uuid via the next provision/req.
+          example: "e9c41985-5df8-47bc-9888-672714dc0fc5"
       example: |
         {
           "req_id": "8f2c4d1a-9b3e-4a17-bf2d-7c5e1a8b9d23",
           "uuid": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
           "oob": "0011223344556677889900112233aabb",
           "ttl_s": 60,
-          "berth_id": "berth-001"
+          "berth_id": "berth-001",
+          "node_id": "e9c41985-5df8-47bc-9888-672714dc0fc5"
         }
 
   - topic: "dockpulse/v1/gw/{gateway_id}/provision/resp"
@@ -399,7 +416,7 @@ topics:
         node_id:
           type: string
           description: Backend node id, included for log correlation
-          example: "node-012"
+          example: "e9c41985-5df8-47bc-9888-672714dc0fc5"
         unicast_addr:
           type: string
           description: Mesh unicast addr to forget, hex
@@ -413,7 +430,7 @@ topics:
       example: |
         {
           "req_id": "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c",
-          "node_id": "node-012",
+          "node_id": "e9c41985-5df8-47bc-9888-672714dc0fc5",
           "unicast_addr": "0x0042",
           "berth_id": "berth-001"
         }
@@ -440,14 +457,14 @@ topics:
               description: >
                 Echoed from req so backend can correlate without tracking
                 req_id → node_id state.
-              example: "node-012"
+              example: "e9c41985-5df8-47bc-9888-672714dc0fc5"
             status:
               type: string
               enum: [ok]
           example: |
             {
               "req_id": "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c",
-              "node_id": "node-012",
+              "node_id": "e9c41985-5df8-47bc-9888-672714dc0fc5",
               "status": "ok"
             }
         - description: >
@@ -462,7 +479,7 @@ topics:
               example: "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c"
             node_id:
               type: string
-              example: "node-012"
+              example: "e9c41985-5df8-47bc-9888-672714dc0fc5"
             status:
               type: string
               enum: [orphan]
@@ -475,7 +492,7 @@ topics:
           example: |
             {
               "req_id": "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c",
-              "node_id": "node-012",
+              "node_id": "e9c41985-5df8-47bc-9888-672714dc0fc5",
               "status": "orphan",
               "attempts": 3
             }
@@ -512,7 +529,7 @@ topics:
           example: |
             {
               "req_id": "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c",
-              "node_id": "node-012",
+              "node_id": "e9c41985-5df8-47bc-9888-672714dc0fc5",
               "status": "err",
               "code": "nvs-write",
               "msg": "esp_err=0x102"
