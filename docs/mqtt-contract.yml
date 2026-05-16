@@ -450,6 +450,35 @@ topics:
               "node_id": "node-012",
               "status": "ok"
             }
+        - description: >
+            Mesh orphan: local cleanup succeeded but the Config Node Reset
+            never received an ack from the node within the retry budget. The
+            provisioner slot is freed so the gateway can adopt a replacement,
+            but the original node may still hold its keys and remain on the
+            mesh. Backend should flag this for operator attention.
+          schema:
+            req_id:
+              type: string
+              example: "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c"
+            node_id:
+              type: string
+              example: "node-012"
+            status:
+              type: string
+              enum: [orphan]
+            attempts:
+              type: integer
+              description: >
+                Number of Config Node Reset send attempts before giving up.
+                Diagnostic only; backend may log but does not switch on it.
+              example: 3
+          example: |
+            {
+              "req_id": "c1a8e2d6-7f9b-4032-b1ef-2d44e8a09f3c",
+              "node_id": "node-012",
+              "status": "orphan",
+              "attempts": 3
+            }
         - description: Decommission failure
           schema:
             req_id:
